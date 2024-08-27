@@ -1,0 +1,63 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Sample {
+  collectionDate      DateTime?
+  createdAt           DateTime         @default(now())
+  description         String?
+  expressionDataItems ExpressionData[]
+  id                  String           @id @default(cuid())
+  sampleName          String?
+  updatedAt           DateTime         @updatedAt
+}
+
+model Gene {
+  createdAt           DateTime         @default(now())
+  expressionDataItems ExpressionData[]
+  id                  String           @id @default(cuid())
+  name                String?
+  symbolField         String?
+  updatedAt           DateTime         @updatedAt
+}
+
+model ExpressionData {
+  createdAt       DateTime @default(now())
+  expressionValue Float?
+  gene            Gene?    @relation(fields: [geneId], references: [id])
+  geneId          String?
+  id              String   @id @default(cuid())
+  sample          Sample?  @relation(fields: [sampleId], references: [id])
+  sampleId        String?
+  updatedAt       DateTime @updatedAt
+}
+
+model Analysis {
+  analysisType EnumAnalysisAnalysisType?
+  createdAt    DateTime                  @default(now())
+  id           String                    @id @default(cuid())
+  results      Json?
+  sampleSource String?
+  updatedAt    DateTime                  @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumAnalysisAnalysisType {
+  Option1
+}
